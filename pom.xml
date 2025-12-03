@@ -36,8 +36,9 @@
   </licenses>
 
   <modules>
-    <module>library</module>
+    <module>library-xml</module>
     <module>cli</module>
+    <module>library-html</module>
   </modules>
 
   <properties>

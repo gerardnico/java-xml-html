@@ -328,4 +328,3 @@ public class Xmls {
         Doms.toStream(newXmlDocument, System.out);
     }
 }
-
