@@ -2,10 +2,12 @@
 # Release of the cli
 set -TCEeuo pipefail
 
+PROJECT_TO_RELEASE=cli
+
 function synopsis() {
   cat << EOF
 
-  Release $PROJECT_NAME:
+  Release $PROJECT_TO_RELEASE:
 
       $(basename "$0") [options] [patch|minor|major|none]
 
@@ -75,7 +77,7 @@ fi
 # Common Arg
 # Because we call only the cli module, jreleaser is expected to be in this directory
 JRELEASER_FILE="jreleaser.yml"
-JRELEASER_COMMON_ARGS=(-Djreleaser.config.file="$JRELEASER_FILE" -pl cli -Dorg.slf4j.simpleLogger.defaultLogLevel=warn)
+JRELEASER_COMMON_ARGS=(-Djreleaser.config.file="$JRELEASER_FILE" -pl "$PROJECT_TO_RELEASE" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn)
 
 # Debug
 if [ $DEBUG == true ]; then
@@ -103,7 +105,7 @@ echo "Packaging and Installing"
 # Installing locally is mandatory because of the dependencies copy
 mvnw install -DskipTests  -Dorg.slf4j.simpleLogger.defaultLogLevel=warn  # create the lib and cli archive
 echo "Copying dependencies"
-mvnw -Pdeps -pl cli -Dorg.slf4j.simpleLogger.defaultLogLevel=warn # copy the dependencies (after packaging because cli depends on xml lib)
+mvnw -Pdeps -pl "$PROJECT_TO_RELEASE" -Dorg.slf4j.simpleLogger.defaultLogLevel=warn # copy the dependencies (after packaging because cli depends on xml lib)
 echo "Assembling version $NEXT_VERSION"
 mvnw jreleaser:assemble "${JRELEASER_COMMON_ARGS[@]}"
 

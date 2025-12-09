@@ -53,6 +53,13 @@
     <sonatype.central.url>https://central.sonatype.com</sonatype.central.url>
     <sonatype.central.url.api>${sonatype.central.url}/api/v1/publisher</sonatype.central.url.api>
 
+    <!--
+      To avoid warning
+      File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+    -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
   </properties>
 
   <dependencyManagement>
