@@ -3,11 +3,11 @@
 _commit: v0.1.7-2-g698533a
 _src_path: https://github.com/combostrap/devfiles
 application_type: library
-copyright_owner: combostrap
+copyright_owner: gerardnico
 copyright_year: 2025
 dependency_manager: none
 license_type: Apache-2.0
-organization_name: combostrap
+organization_name: gerardnico
 package_manager: maven
 project_name: comboj-xml
 releaser: jreleaser

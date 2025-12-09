@@ -1,10 +1,11 @@
 package com.gerardnico.xml.cli;
 
 
-import com.combostrap.exception.NoManifestException;
-import com.combostrap.fs.Fs;
-import com.combostrap.java.JarManifest;
+
 import com.gerardnico.xml.Xmls;
+import com.gerardnico.xml.cli.util.JarManifest;
+import com.gerardnico.xml.cli.util.NoManifestException;
+import com.gerardnico.xml.cli.util.Utils;
 import picocli.CommandLine;
 
 import java.io.FileNotFoundException;
@@ -53,7 +54,7 @@ public class XmlVersionProvider implements CommandLine.IVersionProvider {
             // Not in a jar
             Path pomXml;
             try {
-                pomXml = Fs.closest(Paths.get(""), ".git").getParent().resolve("pom.xml");
+                pomXml = Utils.closest(Paths.get(""), ".git").getParent().resolve("pom.xml");
             } catch (FileNotFoundException ex) {
                 return null;
             }

@@ -1,12 +1,12 @@
 package com.gerardnico.xml;
 
 
-import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.w3c.dom.*;
+import tools.jackson.databind.MappingIterator;
+import tools.jackson.databind.SequenceWriter;
+import tools.jackson.dataformat.csv.CsvMapper;
+import tools.jackson.dataformat.csv.CsvReadFeature;
+import tools.jackson.dataformat.csv.CsvSchema;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,7 +49,7 @@ public class Xmls {
             try (MappingIterator<String[]> csvSelectStream = csvMapper
                     .readerFor(String[].class)
                     // This setting will transform the json as array to get a String[]
-                    .with(CsvParser.Feature.WRAP_AS_ARRAY)
+                    .with(CsvReadFeature.WRAP_AS_ARRAY)
                     .with(schema)
                     .readValues(csvPath.toFile())) {
 
@@ -60,8 +60,6 @@ public class Xmls {
                     updateOne(doc, csvXpath, csvValue);
                 }
 
-            } catch (IOException e) {
-                throw new RuntimeException("Error while reading the CSV file " + csvPath, e);
             }
 
 
@@ -114,7 +112,7 @@ public class Xmls {
             try (MappingIterator<String[]> csvSelectStream = csvMapper
                     .readerFor(String[].class)
                     // This setting will transform the json as array to get a String[]
-                    .with(CsvParser.Feature.WRAP_AS_ARRAY)
+                    .with(CsvReadFeature.WRAP_AS_ARRAY)
                     .with(schema)
                     .readValues(csvPath.toFile())) {
 
@@ -128,8 +126,6 @@ public class Xmls {
                     }
                 }
 
-            } catch (IOException e) {
-                throw new RuntimeException("Error while reading the CSV file " + csvPath, e);
             }
 
         }
@@ -278,8 +274,6 @@ public class Xmls {
                 writer.writeAll(csvRow);
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException("Error while writing to " + csvFileName.getFileName(), e);
         }
 
 

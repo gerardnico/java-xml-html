@@ -1,6 +1,7 @@
 package com.gerardnico.xml.cli;
 
-import com.combostrap.fs.Fs;
+
+import com.gerardnico.xml.cli.util.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ class XmlQueryTest {
     @Test
     void queryTest() throws FileNotFoundException {
 
-        Path pomXml = Fs.closest(Paths.get(""), ".git").getParent().resolve("pom.xml");
+        Path pomXml = Utils.closest(Paths.get(""), ".git").getParent().resolve("pom.xml");
 
         String output = TestUtil.captureStdout(new String[]{"query", "-xp", "/project/version/text()", pomXml.toString()});
 

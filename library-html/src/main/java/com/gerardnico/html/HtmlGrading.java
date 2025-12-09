@@ -1,10 +1,9 @@
 package com.gerardnico.html;
 
 
-import com.combostrap.exception.IllegalStructure;
-import com.combostrap.exception.NotFoundException;
-import com.combostrap.type.DnsName;
-import com.combostrap.type.UriEnhanced;
+import com.gerardnico.html.util.CastException;
+import com.gerardnico.html.util.DnsName;
+import com.gerardnico.html.util.UriEnhanced;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -66,19 +65,20 @@ public class HtmlGrading {
             UriEnhanced hrefUri;
             try {
                 hrefUri = UriEnhanced.createFromString(href);
-            } catch (IllegalStructure e) {
+            } catch (CastException e) {
                 continue;
             }
-            try {
-                DnsName hrefHost = hrefUri.getHost();
+
+            DnsName hrefHost = hrefUri.getHost();
+            if (hrefHost == null) {
+                // no host, the url is relative
+                internalLink++;
+            } else {
                 if (hrefHost.getApexName().equals(apexDomainNameAsString.getApexName())) {
                     internalLink++;
                 } else {
                     externalLink++;
                 }
-            } catch (NotFoundException e) {
-                // no host, the url is relative
-                internalLink++;
             }
         }
         if (externalLink > internalLink) {

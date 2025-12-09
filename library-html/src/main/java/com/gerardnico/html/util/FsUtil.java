@@ -3,6 +3,7 @@ package com.gerardnico.html.util;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,27 @@ public class FsUtil {
             return Files.readString(path, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("Error while reading the path (" + path + "). Error: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Utility class to return a file from the resource directory
+     *
+     * @param clazz - the clazz
+     * @param path  - the path (called name with a root separator generally)
+     * @return the path
+     */
+    public static Path getPathFromResources(Class<?> clazz, String path) {
+        try {
+            URL clazzResource = clazz.getResource(path);
+            if (clazzResource == null) {
+                // verify that they are in the resource directory
+                // that in your IDE, the path is marked as resource root
+                throw new RuntimeException("Resource not found: " + path);
+            }
+            return Paths.get(clazzResource.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 

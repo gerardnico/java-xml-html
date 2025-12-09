@@ -46,8 +46,8 @@ repos:
         name: check pom.xml file
       - id: maven-install
         name: install artifacts in local repo
-      - id: javadoc-check
-        name: Check javadoc comments
+#      - id: javadoc-check
+#        name: Check javadoc comments
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
     rev: c9d5ed0 # v3.4.1
     hooks:

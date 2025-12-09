@@ -5,7 +5,7 @@
 environment:
   properties:
     cliBaseDir: 'cli'
-    cliArtifactId: 'combostrap-xml-cli'
+    cliArtifactId: 'gerardnico-xml-cli'
 
 project:
   # Mandatory for assemblers it seems
@@ -18,7 +18,7 @@ project:
     - cli
   languages:
     java:
-      artifactId: combostrap-cli # by default in the distributions, this is xmli-nojre
+      artifactId: gerardnico-cli # by default in the distributions, this is xmli-nojre
 
 # Assemble create artifacts that can be distributed
 # Distribution uses them to define the set of artifacts in the release
@@ -38,7 +38,7 @@ assemble:
       archiveName: '{{cliArtifactId}}-{{projectEffectiveVersion}}-nojre'
       # Main Class
       java:
-        mainClass: com.combostrap.xml.cli.Xmli
+        mainClass: com.gerardnico.xml.cli.Xmli
       # Common practice is to provide both .zip and .tar.gz
       formats:
         - ZIP
@@ -112,9 +112,6 @@ distributions:
     brew:
       active: ALWAYS
       formulaName: 'xmli'
-      commitAuthor:
-        name: ReleaseBot
-        email: support@combostrap.com
       repository:
         tagName: '{{projectName}}-{{tagName}}'
     # Run it with:
@@ -124,11 +121,7 @@ distributions:
       active: ALWAYS
       continueOnError: true
       title: 'Xml Cli'
-      iconUrl: 'https://rawcdn.githack.com/combostrap/site-com-combostrap/fcae9343885f4b6e4e8f977a05cb7353e84c3c8c/data/media/android-chrome-192x192.png'
       packageName: 'xmli' # no template (name of the package, ie name of the application)
-      commitAuthor:
-        name: ReleaseBot
-        email: support@combostrap.com
       # As seen in the doc: "package and push on CI, set remoteBuild to true"
       # If false, chocolatey.apiKey must not be blank
       # Why because it would perform the pack and push command immediately

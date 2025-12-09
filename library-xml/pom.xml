@@ -3,15 +3,15 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>combostrap-xml</artifactId>
+  <artifactId>gerardnico-xml</artifactId>
   <packaging>jar</packaging>
-  <name>Combostrap XML Library</name>
+  <name>XML Library</name>
   <description>XML module</description>
-  <url>https://github.com/combostrap/comboj-xml</url>
+  <url>https://github.com/gerardnico/java-xml-xhtml</url>
 
   <parent>
-    <groupId>com.combostrap</groupId>
-    <artifactId>combostrap-xml-aggregator</artifactId>
+    <groupId>com.gerardnico</groupId>
+    <artifactId>gerardnico-xml-aggregator</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -29,7 +29,7 @@
       <artifactId>xstream</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <groupId>tools.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-csv</artifactId>
     </dependency>
   </dependencies>

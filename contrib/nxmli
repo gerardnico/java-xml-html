@@ -5,7 +5,7 @@
 set -TCEeuo pipefail
 
 # Configuration
-MAIN_CLASS="com.combostrap.xml.cli.Xmli"  # Default main class or first argument
+MAIN_CLASS="com.gerardnico.xml.cli.Xmli"  # Default main class or first argument
 APP_ARGS=${*}  # Additional arguments passed to the Java application
 
 # Colors for output

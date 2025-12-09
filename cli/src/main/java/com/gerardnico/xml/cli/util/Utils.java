@@ -1,23 +1,22 @@
-package com.gerardnico.xml.cli;
+package com.gerardnico.xml.cli.util;
 
 import java.io.FileNotFoundException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class TestUtil {
+public class Utils {
 
 
-    public static String captureStdout(String[] args) {
-        java.io.ByteArrayOutputStream byteArrayOutputStream = new java.io.ByteArrayOutputStream();
-        java.io.PrintStream original = System.out;
-        System.setOut(new java.io.PrintStream(byteArrayOutputStream));
-        try {
-            Xmli.main(args);
-        } finally {
-            System.setOut(original);
+    public static boolean isJUnitTest() {
+
+        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().startsWith("org.junit.")) {
+                return true;
+            }
         }
-        return byteArrayOutputStream.toString(StandardCharsets.UTF_8);
+
+        return false;
+
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.gerardnico.xml.cli;
 
 
-import com.combostrap.java.JavaEnvs;
+import com.gerardnico.xml.cli.util.Utils;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
@@ -44,7 +44,7 @@ public class Xmli implements Callable<Integer> {
         CommandLine commandLine = getCommandLine();
 
         int exitCode = commandLine.execute(args);
-        if (JavaEnvs.isJUnitTest()) {
+        if (Utils.isJUnitTest()) {
             if (exitCode != 0) {
                 throw new RuntimeException("Exit code (" + exitCode + ") is not zero. Errors has been seen.");
             }

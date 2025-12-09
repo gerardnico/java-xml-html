@@ -1,6 +1,6 @@
 package com.gerardnico.xml.cli;
 
-import com.combostrap.type.Strings;
+
 import com.gerardnico.xml.Xmls;
 import picocli.CommandLine;
 
@@ -63,10 +63,10 @@ public class XmlUpdate implements Callable<Integer> {
 
         if (xpath == null && csvPath == null) {
             throw new IllegalArgumentException(
-                    Strings.createMultiLineFromStrings(
+                    String.join(System.lineSeparator(),
                             "The xpath parameter or the CSV file parameter is mandatory",
                             "None of this parameters were found"
-                    ).toString());
+                    ));
         }
 
 

@@ -1,7 +1,6 @@
 package com.gerardnico.xml.cli;
 
 
-import com.combostrap.type.Strings;
 import com.gerardnico.xml.XmlDoc;
 import com.gerardnico.xml.XmlDomTree;
 import org.w3c.dom.Document;
@@ -117,9 +116,11 @@ public class XmlPrint implements Callable<Integer> {
                 documentBuilderFactory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             } catch (IllegalArgumentException x) {
                 // This can happen if the parser does not support JAXP 1.2
-                throw new RuntimeException(Strings.createMultiLineFromStrings(
+                throw new RuntimeException(
+                        String.join(System.lineSeparator(),
                         "Error: JAXP DocumentBuilderFactory attribute not recognized: " + JAXP_SCHEMA_LANGUAGE,
-                        "Check to see if parser conforms to JAXP 1.2 spec.").toString());
+                        "Check to see if parser conforms to JAXP 1.2 spec.")
+                );
 
             }
         }

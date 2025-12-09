@@ -3,16 +3,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>combostrap-xml-cli</artifactId>
+  <artifactId>gerardnico-xml-cli</artifactId>
   <packaging>jar</packaging>
   <version>0.1.0-SNAPSHOT</version>
-  <name>Combostrap XML Cli</name>
+  <name>XML Cli</name>
   <description>XML Cli</description>
-  <url>https://github.com/combostrap/comboj-xml</url>
+  <url>https://github.com/gerarnico/java-xml-xhtml</url>
 
   <parent>
-    <groupId>com.combostrap</groupId>
-    <artifactId>combostrap-xml-aggregator</artifactId>
+    <groupId>com.gerardnico</groupId>
+    <artifactId>gerardnico-xml-aggregator</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
@@ -30,12 +30,8 @@
       <artifactId>picocli</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.combostrap</groupId>
-      <artifactId>combostrap-xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.combostrap</groupId>
-      <artifactId>combostrap-base</artifactId>
+      <groupId>com.gerardnico</groupId>
+      <artifactId>gerardnico-xml</artifactId>
     </dependency>
   </dependencies>
 
