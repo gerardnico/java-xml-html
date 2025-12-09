@@ -9,7 +9,7 @@ environment:
 
 project:
   # Mandatory for assemblers it seems
-  copyright: 2025 ComboStrap
+  copyright: 2025 Gerardnico
   stereotype: CLI
   # Mandatory for chocolatey
   # Otherwise we get the error: Distribution tags must not be empty
@@ -18,7 +18,7 @@ project:
     - cli
   languages:
     java:
-      artifactId: gerardnico-cli # by default in the distributions, this is xmli-nojre
+      artifactId: gerardnico-xml-cli # by default in the distributions, this is xmli-nojre
 
 # Assemble create artifacts that can be distributed
 # Distribution uses them to define the set of artifacts in the release

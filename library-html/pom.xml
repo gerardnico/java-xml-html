@@ -13,7 +13,7 @@
   <parent>
     <groupId>com.gerardnico</groupId>
     <artifactId>gerardnico-xml-aggregator</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

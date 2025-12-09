@@ -44,8 +44,8 @@ repos:
         name: prevent out-of-sync branch commit
       - id: maven-check-pom-xml
         name: check pom.xml file
-      - id: maven-install
-        name: install artifacts in local repo
+#      - id: maven-install
+#        name: install artifacts in local repo
 #      - id: javadoc-check
 #        name: Check javadoc comments
   - repo: https://github.com/editorconfig-checker/editorconfig-checker
