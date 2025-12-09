@@ -7,7 +7,7 @@ function synopsis() {
 
   Release $PROJECT_NAME:
 
-      $(basename "$0") [options] [patch|minor|major|early]
+      $(basename "$0") [options] [patch|minor|major|none]
 
   Options:
     * -a | --assemble-only    : create the archive only (will not release)
@@ -16,14 +16,14 @@ function synopsis() {
     * -p | --prepare-only     : create the archive and the packagers manifest only (will not release)
     * --debug                 : set the level to debug
   Args:
-    * patch|minor|major|early : is the type of bump for the semver version (default to early - no bump)
+    * patch|minor|major|none  : is the type of bump for the semver version (default to none - no bump)
 
   Full release is performed if the bump type is not early
 
 EOF
 }
 
-BUMP_TYPE="early"
+BUMP_TYPE="none"
 GOAL="release"
 ASSEMBLE_GOAL="assemble"
 PREPARE_GOAL="prepare"
@@ -59,9 +59,9 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
-
-NEXT_VERSION="early"
-if [ "$BUMP_TYPE" != "early" ]; then
+NO_BUMP="none"
+NEXT_VERSION="$NO_BUMP"
+if [ "$BUMP_TYPE" != "$NO_BUMP" ]; then
   # Get the next version
   export GIT_CLIFF__BUMP__INITIAL_TAG=v0.1.0 # by default it's 0.1.0
   NEXT_VERSION=$(git cliff --unreleased --bump "$BUMP_TYPE" --context --tag-pattern "v[0-9]+\\.[0-9]+\\.[0-9]+" | jq -r '.[0].version' | tr -d "v")
@@ -99,8 +99,9 @@ fi
 # Create the cli archive
 echo "Cleaning"
 mvnw clean -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
-echo "Packaging"
-mvnw package -DskipTests  -Dorg.slf4j.simpleLogger.defaultLogLevel=warn  # create the lib and cli archive
+echo "Packaging and Installing"
+# Installing locally is mandatory because of the dependencies copy
+mvnw install -DskipTests  -Dorg.slf4j.simpleLogger.defaultLogLevel=warn  # create the lib and cli archive
 echo "Copying dependencies"
 mvnw -Pdeps -pl cli -Dorg.slf4j.simpleLogger.defaultLogLevel=warn # copy the dependencies (after packaging because cli depends on xml lib)
 echo "Assembling version $NEXT_VERSION"
@@ -119,7 +120,7 @@ if [ "$GOAL" == "$PREPARE_GOAL" ]; then
 fi
 
 # Release
-if [ "$BUMP_TYPE" == "early" ]; then
+if [ "$BUMP_TYPE" == "$NO_BUMP" ]; then
   echo "Version release of $NEXT_VERSION"
   mvnw jreleaser:release "${JRELEASER_COMMON_ARGS[@]}"
   echo "Version release of $NEXT_VERSION done"
@@ -134,7 +135,7 @@ echo "Full release of $NEXT_VERSION done"
 
 # Next dev iteration
 NEXT_VERSION=$(git cliff --unreleased --bump "patch" --context --tag-pattern "v[0-9]+\\.[0-9]+\\.[0-9]+" | jq -r '.[0].version' | tr -d "v")
-NEXT_SNAPSHOT_VERSION="$NEXT_VERSION-snapshot"
+NEXT_SNAPSHOT_VERSION="$NEXT_VERSION-SNAPSHOT"
 echo "Next Iteration Commit to $NEXT_SNAPSHOT_VERSION"
 mvnw versions:set -DgenerateBackupPoms=false -DnewVersion="$NEXT_SNAPSHOT_VERSION"
 git commit -am "chore(next): $NEXT_SNAPSHOT_VERSION"

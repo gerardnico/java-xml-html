@@ -7,7 +7,7 @@
   <artifactId>gerardnico-xml-aggregator</artifactId>
   <groupId>com.gerardnico</groupId>
   <packaging>pom</packaging>
-  <version>0.1.0</version>
+  <version>0.1.1-SNAPSHOT</version>
   <name>XML Aggregator</name>
   <description>XML Aggregator for library and cli</description>
   <url>https://github.com/gerardnico/java-xml-xhtml</url>
@@ -33,6 +33,26 @@
     <!-- This pom is a module, we don't deploy to maven central -->
     <!-- The libraries modules set it to true -->
     <maven.deploy.skip>true</maven.deploy.skip>
+    <!--
+      staging repo value used at multiple place (https://jreleaser.org/guide/latest/examples/maven/staging-artifacts.html)
+      Don't use ${project.build.directory} for the target
+      Why? JReleaser don't like that as it check for each module if the directory exists
+      if the module does not deploy, we get this error:
+      stagingRepository does not exist: cli/target/staging-deploy
+    -->
+    <jreleaser.staging-repo>./target/staging-deploy</jreleaser.staging-repo>
+
+    <!-- pgp signing key name -->
+    <pgp.signing.key.name>nico@gerardnico.com</pgp.signing.key.name>
+
+    <!-- Publication / Deployment -->
+    <maven.central.publishing.maven.plugin.version>0.7.0</maven.central.publishing.maven.plugin.version>
+    <sonatype.snapshotRepository>https://central.sonatype.com/repository/maven-snapshots/
+    </sonatype.snapshotRepository>
+    <sonatype.central.serverId>central</sonatype.central.serverId>
+    <sonatype.central.url>https://central.sonatype.com</sonatype.central.url>
+    <sonatype.central.url.api>${sonatype.central.url}/api/v1/publisher</sonatype.central.url.api>
+
   </properties>
 
   <dependencyManagement>
@@ -95,5 +115,225 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.jreleaser</groupId>
+          <artifactId>jreleaser-maven-plugin</artifactId>
+          <version>1.21.0</version>
+        </plugin>
+        <!-- https://github.com/git-commit-id/git-commit-id-maven-plugin -->
+        <plugin>
+          <groupId>io.github.git-commit-id</groupId>
+          <artifactId>git-commit-id-maven-plugin</artifactId>
+          <version>9.0.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.4.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jreleaser</groupId>
+        <artifactId>jreleaser-maven-plugin</artifactId>
+        <configuration>
+          <jreleaser>
+            <!-- https://jreleaser.org/guide/latest/reference/signing.html -->
+            <signing>
+              <active>ALWAYS</active>
+              <mode>COMMAND</mode>
+              <armored>true</armored>
+              <command>
+                <keyName>${pgp.signing.key.name}</keyName>
+              </command>
+            </signing>
+            <deploy>
+              <!-- Ref: https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_maven -->
+              <maven>
+                <mavenCentral>
+                  <sonatype>
+                    <active>RELEASE</active>
+                    <url>${sonatype.central.url.api}</url>
+                    <applyMavenCentralRules>true</applyMavenCentralRules>
+                    <stagingRepositories>${jreleaser.staging-repo}</stagingRepositories>
+                    <!-- JReleaser pull maven until the status is published -->
+                    <!-- Status may take a long time to get the published status -->
+                    <!-- Max 1 minute wait: 5x12=60 seconds -->
+                    <retryDelay>5</retryDelay>
+                    <maxRetries>12</maxRetries>
+                  </sonatype>
+                </mavenCentral>
+                <!-- For Snapshot -->
+                <nexus2>
+                  <snapshot-deploy>
+                    <active>SNAPSHOT</active>
+                    <snapshotUrl>https://central.sonatype.com/repository/maven-snapshots/
+                    </snapshotUrl>
+                    <applyMavenCentralRules>true</applyMavenCentralRules>
+                    <snapshotSupported>true</snapshotSupported>
+                    <closeRepository>true</closeRepository>
+                    <releaseRepository>true</releaseRepository>
+                    <stagingRepositories>${jreleaser.staging-repo}</stagingRepositories>
+                    <!-- JReleaser pull maven until the status is published -->
+                    <!-- Status may take a long time to get the published status -->
+                    <!-- Max 1 minute wait: 5x12=60 seconds -->
+                    <transitionDelay>5</transitionDelay>
+                    <transitionMaxRetries>12</transitionMaxRetries>
+                  </snapshot-deploy>
+                </nexus2>
+              </maven>
+            </deploy>
+            <release>
+              <github>
+                <owner>combostrap</owner>
+              </github>
+            </release>
+          </jreleaser>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- Git Injection -->
+        <!-- https://github.com/git-commit-id/git-commit-id-maven-plugin -->
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <!-- Binds to the initialize phase by default, so that all git properties are available -->
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <skipPoms>false</skipPoms>
+          <!-- Inject the properties in all pom -->
+          <injectAllReactorProjects>true</injectAllReactorProjects>
+          <!-- Use native git because git.tag was blank -->
+          <useNativeGit>true</useNativeGit>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+                <!-- Generate a jar INDEX.LIST -->
+                <index>true</index>
+                <manifestEntries>
+                  <!-- Add the Maven coordinates in the manifest -->
+                  <Maven-Project-Group-Id>${project.groupId}</Maven-Project-Group-Id>
+                  <Maven-Project-Artifact-Id>${project.artifactId}</Maven-Project-Artifact-Id>
+                  <Maven-Project-Version>${project.version}</Maven-Project-Version>
+                  <Maven-Version>${maven.version}</Maven-Version>
+                  <Maven-Build-Timestamp>${maven.build.timestamp}</Maven-Build-Timestamp>
+                  <Maven-Build-Version>${maven.build.version}</Maven-Build-Version>
+                  <!-- Package -->
+                  <!-- https://docs.oracle.com/javase/8/docs/technotes/guides/versioning/spec/versioning2.html#wp89936 -->
+                  <Package-Title>${project.name}</Package-Title>
+                  <Package-Version>${project.version}</Package-Version>
+                  <Package-Vendor>${project.organization.name}</Package-Vendor>
+                  <Package-Vendor-Url>${project.organization.url}</Package-Vendor-Url>
+                  <!-- Os -->
+                  <Os-Arch>${os.arch}</Os-Arch>
+                  <Os-Name>${os.name}</Os-Name>
+                  <Os-Version>${os.version}</Os-Version>
+                  <!-- Java -->
+                  <Java-Version>${java.version}</Java-Version>
+                  <Java-Version-Date>${java.version.date}</Java-Version-Date>
+                  <Java-Vendor>${java.vendor}</Java-Vendor>
+                  <Java-Vendor-Url>${java.vendor.url}</Java-Vendor-Url>
+                  <Java-Vendor-Version>${java.vendor.version}</Java-Vendor-Version>
+                  <Java-VM-Name>${java.vm.name}</Java-VM-Name>
+                  <Java-VM-Version>${java.vm.version}</Java-VM-Version>
+                  <Java-VM-Vendor>${java.vm.vendor}</Java-VM-Vendor>
+                  <Java-VM-Info>${java.vm.info}</Java-VM-Info>
+                  <Java-Runtime-Name>${java.runtime.name}</Java-Runtime-Name>
+                  <Java-Runtime-Version>${java.runtime.version}</Java-Runtime-Version>
+                  <!-- Add the Git and build info -->
+                  <!-- https://github.com/git-commit-id/git-commit-id-maven-plugin/blob/master/docs/configuration-and-properties.md -->
+                  <!-- https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java -->
+                  <!-- Property are immutable so we can't set them and the IDE is not happy, we silence the warning -->
+                  <!--suppress MavenModelInspection -->
+                  <Build-Host>${git.build.host}</Build-Host>
+                  <!-- The CI unique id -->
+                  <!--suppress MavenModelInspection -->
+                  <Build-Number>${git.build.number}</Build-Number>
+                  <!-- Git info-->
+                  <!--suppress MavenModelInspection -->
+                  <Git-Branch>${git.branch}</Git-Branch>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Dirty>${git.dirty}</Git-Dirty>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit>${git.commit.id}</Git-Commit>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-Abbrev>${git.commit.id.abbrev}</Git-Commit-Abbrev>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-Describe>${git.commit.id.describe}</Git-Commit-Describe>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-User-name>${git.build.user.name}</Git-Commit-User-name>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-User-email>${git.build.user.email}</Git-Commit-User-email>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-Message-Short>${git.commit.message.short}</Git-Commit-Message-Short>
+                  <!-- A multiline property in the MANIFEST should start all new line with a space -->
+                  <!-- Unfortunately, not easy to do in the declarative maven -->
+                  <!-- <Git-Commit-Message-Full>${git.commit.message.full}</Git-Commit-Message-Full>-->
+                  <!--suppress MavenModelInspection -->
+                  <Git-Commit-Time>${git.commit.time}</Git-Commit-Time>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Tag>${git.tag}</Git-Tag>
+                  <!--suppress MavenModelInspection -->
+                  <Git-Tags>${git.tags}</Git-Tags>
+                </manifestEntries>
+              </archive>
+              <!-- Remove examples and native-image -->
+              <excludes>
+                <exclude>/examples/**</exclude>
+                <exclude>META-INF/native-image/**</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>native-image-jar</id>
+            <configuration>
+              <archive>
+                <manifest>
+                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                  <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                </manifest>
+                <!-- Generate a jar INDEX.LIST -->
+                <index>true</index>
+                <manifestEntries>
+                  <!-- Add the Maven coordinates in the manifest -->
+                  <Maven-Group-Id>${project.groupId}</Maven-Group-Id>
+                  <Maven-Artifact-Id>${project.artifactId}</Maven-Artifact-Id>
+                  <Maven-Version>${project.version}</Maven-Version>
+                </manifestEntries>
+              </archive>
+              <!-- Remove examples -->
+              <excludes>
+                <exclude>/examples/**</exclude>
+              </excludes>
+              <classifier>native-image</classifier>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

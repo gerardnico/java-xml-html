@@ -16,6 +16,9 @@ project:
   tags:
     - xml
     - cli
+  # Mandatory with distributions
+  authors:
+    - "Nico <nico@gerardnico.com>"
   languages:
     java:
       artifactId: gerardnico-xml-cli # by default in the distributions, this is xmli-nojre
